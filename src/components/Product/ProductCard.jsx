@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiSend, FiHeart, FiEye, FiAlertCircle } from 'react-icons/fi';
 
-// Direct image URL helper without importing from api
+// Image URL helper - no external imports
 const getImageUrl = (imagePath) => {
   if (!imagePath) return 'https://via.placeholder.com/300x300?text=No+Image';
   if (imagePath.startsWith('http')) return imagePath;
@@ -75,7 +75,10 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
                 <span>Out of Stock</span>
               </div>
             ) : (
-              <button onClick={handleContactToBuy} className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all flex items-center space-x-2">
+              <button 
+                onClick={handleContactToBuy} 
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all flex items-center space-x-2"
+              >
                 <FiSend size={18} />
                 <span>Contact to Buy</span>
               </button>
@@ -138,7 +141,10 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
               <span>Out of Stock</span>
             </div>
           ) : (
-            <button onClick={handleContactToBuy} className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center space-x-2 text-sm">
+            <button 
+              onClick={handleContactToBuy} 
+              className="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white px-3 py-2 rounded-lg hover:from-green-700 hover:to-green-800 transition-all flex items-center justify-center space-x-2 text-sm"
+            >
               <FiSend size={16} />
               <span>Contact to Buy</span>
             </button>
