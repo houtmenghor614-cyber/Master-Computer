@@ -1,8 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiSend, FiHeart, FiEye, FiAlertCircle } from 'react-icons/fi';
-import { getImageUrl } from '../services/api';
-import { useCart } from '../../context/CartContext'; // If you have cart context
+
+// Direct image URL helper without importing from api
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return 'https://via.placeholder.com/300x300?text=No+Image';
+  if (imagePath.startsWith('http')) return imagePath;
+  const cleanPath = imagePath.replace(/^\/+/, '');
+  return `https://backend-master-computer.onrender.com/${cleanPath}`;
+};
 
 const ProductCard = ({ product, viewMode = 'grid' }) => {
   const discountPercentage = product.original_price > product.discount_price
