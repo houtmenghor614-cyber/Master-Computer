@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiSend, FiHeart, FiShare2, FiCheck, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
-import { productAPI } from '../services/api';
+import { productAPI, getImageUrl } from '../services/api';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import ErrorMessage from '../components/Common/ErrorMessage';
 import toast from 'react-hot-toast';
@@ -75,12 +75,6 @@ Product ID: #${product.id}
 
 ================================
 
-🖼️ PRODUCT IMAGE
---------------------------------
-http://localhost:8000/${product.main_image}
-
-================================
-
 💬 CUSTOMER REQUEST
 --------------------------------
 I'm interested in this product!
@@ -125,10 +119,11 @@ Thank you!`;
 
       <div className="bg-dark-card rounded-2xl shadow-2xl overflow-hidden border border-gray-800">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
+          {/* Image Gallery - Fixed with getImageUrl */}
           <div>
             <div className="mb-4">
               <img 
-                src={`http://localhost:8000/${allImages[currentImage] || product.main_image}`}
+                src={getImageUrl(allImages[currentImage] || product.main_image)}
                 alt={product.title_product}
                 className="w-full h-96 object-cover rounded-xl"
                 onError={(e) => {
@@ -147,9 +142,12 @@ Thank you!`;
                     }`}
                   >
                     <img 
-                      src={`http://localhost:8000/${img}`}
+                      src={getImageUrl(img)}
                       alt={`Product ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/80x80?text=No+Image';
+                      }}
                     />
                   </button>
                 ))}
@@ -157,6 +155,7 @@ Thank you!`;
             )}
           </div>
 
+          {/* Product Info */}
           <div>
             <div className="mb-4">
               <h1 className="text-3xl font-bold text-white mb-2">{product.title_product}</h1>
@@ -183,6 +182,7 @@ Thank you!`;
               </div>
             </div>
 
+            {/* Stock Availability */}
             <div className="mb-6 p-4 rounded-xl border border-gray-800 bg-dark-bg">
               <h3 className="text-sm font-semibold text-gray-300 mb-3">📦 Stock Availability</h3>
               {!isOutOfStock ? (
@@ -215,6 +215,7 @@ Thank you!`;
               )}
             </div>
 
+            {/* Color Information */}
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-300 mb-2">🎨 Color Available</h3>
               <div className="flex space-x-2">
@@ -224,6 +225,7 @@ Thank you!`;
               </div>
             </div>
 
+            {/* Size Information */}
             {sizes.length > 0 && sizes[0] !== 'One Size' && (
               <div className="mb-6">
                 <h3 className="text-sm font-semibold text-gray-300 mb-2">📏 Available Sizes</h3>
@@ -235,6 +237,7 @@ Thank you!`;
               </div>
             )}
 
+            {/* Contact Button */}
             <div className="mb-6">
               <button
                 onClick={handleContactToBuy}
@@ -255,6 +258,7 @@ Thank you!`;
               </p>
             </div>
 
+            {/* Key Features */}
             <div className="bg-dark-bg rounded-xl p-4 mb-6 border border-gray-800">
               <h3 className="font-semibold text-white mb-3">✅ Why Buy From Us?</h3>
               <div className="grid grid-cols-2 gap-3">
@@ -265,6 +269,7 @@ Thank you!`;
               </div>
             </div>
 
+            {/* Action Icons */}
             <div className="flex items-center space-x-4 pt-4 border-t border-gray-800">
               <button className="flex items-center space-x-2 text-gray-400 hover:text-red-500 transition-colors"><FiHeart size={18} /><span>Save to Wishlist</span></button>
               <button className="flex items-center space-x-2 text-gray-400 hover:text-primary-400 transition-colors"><FiShare2 size={18} /><span>Share</span></button>
@@ -272,6 +277,7 @@ Thank you!`;
           </div>
         </div>
 
+        {/* Tabs Section */}
         <div className="border-t border-gray-800">
           <div className="flex border-b border-gray-800">
             <button onClick={() => setActiveTab('description')} className={`px-6 py-3 font-semibold transition-colors ${activeTab === 'description' ? 'text-primary-400 border-b-2 border-primary-400' : 'text-gray-400 hover:text-white'}`}>Description</button>

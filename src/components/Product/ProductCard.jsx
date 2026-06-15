@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiSend, FiEye, FiAlertCircle } from 'react-icons/fi';
+import { FiSend, FiHeart, FiEye, FiAlertCircle } from 'react-icons/fi';
+import { getImageUrl } from '../services/api';
 
 const ProductCard = ({ product, viewMode = 'grid' }) => {
   const discountPercentage = product.original_price > product.discount_price
@@ -14,10 +15,10 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
     e.stopPropagation();
     
     const stockMessage = isOutOfStock 
-      ? '\n\n⚠️ This product is currently OUT OF STOCK. Please let me know when it will be available.' 
+      ? '\n\n⚠️ This product is currently OUT OF STOCK.' 
       : `\n\n✅ In Stock: ${product.stock_quantity} units available`;
     
-    const message = `🛍️ Product Inquiry\n\nProduct: ${product.title_product}\nPrice: $${product.discount_price}\nStock: ${product.stock_quantity || 0} units${stockMessage}\n\nI'm interested in this product.`;
+    const message = `🛍️ Product Inquiry\n\nProduct: ${product.title_product}\nPrice: $${product.discount_price}\nStock: ${product.stock_quantity || 0} units${stockMessage}`;
     
     const telegramUrl = `https://t.me/hortmenghor?text=${encodeURIComponent(message)}`;
     window.open(telegramUrl, '_blank');
@@ -28,9 +29,13 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
       <div className="card flex flex-col sm:flex-row">
         <Link to={`/product/${product.id}`} className="sm:w-48 h-48 flex-shrink-0 relative">
           <img 
-            src={`http://localhost:8000/${product.main_image}`} 
-            alt={product.title_product} 
-            className="w-full h-full object-cover rounded-l-xl" 
+            src={getImageUrl(product.main_image)}
+            alt={product.title_product}
+            className="w-full h-full object-cover rounded-l-xl"
+            loading="lazy"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/200x200?text=No+Image';
+            }}
           />
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/70 flex items-center justify-center rounded-l-xl">
@@ -43,8 +48,6 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
             <h3 className="text-lg font-semibold text-white hover:text-primary-400">{product.title_product}</h3>
           </Link>
           <p className="text-gray-400 text-sm mt-1">Color: {product.color}</p>
-          
-          {/* STOCK DISPLAY - LIST VIEW */}
           <p className="text-sm mt-1">
             {isOutOfStock ? (
               <span className="text-red-400">Out of Stock</span>
@@ -52,7 +55,6 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
               <span className="text-green-400">In Stock: {product.stock_quantity} units</span>
             )}
           </p>
-          
           <div className="flex items-center justify-between mt-4">
             <div>
               <span className="text-2xl font-bold text-primary-400">${product.discount_price}</span>
@@ -82,9 +84,13 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
       <Link to={`/product/${product.id}`}>
         <div className="relative overflow-hidden h-64">
           <img 
-            src={`http://localhost:8000/${product.main_image}`} 
-            alt={product.title_product} 
-            className={`w-full h-full object-cover transition-transform duration-500 ${!isOutOfStock && 'group-hover:scale-110'}`} 
+            src={getImageUrl(product.main_image)}
+            alt={product.title_product}
+            className={`w-full h-full object-cover transition-transform duration-500 ${!isOutOfStock && 'group-hover:scale-110'}`}
+            loading="lazy"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/300x300?text=No+Image';
+            }}
           />
           {discountPercentage > 0 && !isOutOfStock && (
             <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-bold">
@@ -103,8 +109,6 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
           <h3 className="text-lg font-semibold text-white hover:text-primary-400 mb-2 line-clamp-2">{product.title_product}</h3>
         </Link>
         <p className="text-sm text-gray-400 mb-1">{product.color}</p>
-        
-        {/* STOCK DISPLAY - GRID VIEW */}
         <p className="text-xs mb-2">
           {isOutOfStock ? (
             <span className="text-red-400">❌ Out of Stock</span>
@@ -112,7 +116,6 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
             <span className="text-green-400">✅ In Stock: {product.stock_quantity} left</span>
           )}
         </p>
-        
         <div className="flex items-center justify-between mb-3">
           <div>
             <span className="text-2xl font-bold text-primary-400">${product.discount_price}</span>
@@ -121,7 +124,6 @@ const ProductCard = ({ product, viewMode = 'grid' }) => {
             )}
           </div>
         </div>
-        
         <div className="flex space-x-2">
           {isOutOfStock ? (
             <div className="flex-1 bg-red-500/20 text-red-400 px-3 py-2 rounded-lg flex items-center justify-center space-x-2 text-sm">
