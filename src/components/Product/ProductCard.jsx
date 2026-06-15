@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiSend, FiHeart, FiEye, FiAlertCircle } from 'react-icons/fi';
 import { getImageUrl } from '../services/api';
+import { useCart } from '../../context/CartContext'; // If you have cart context
 
 const ProductCard = ({ product, viewMode = 'grid' }) => {
   const discountPercentage = product.original_price > product.discount_price
