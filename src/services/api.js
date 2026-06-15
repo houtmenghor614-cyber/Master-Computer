@@ -1,12 +1,14 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// Update to your Render backend URL
+const API_BASE_URL = 'https://backend-master-computer.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000,
 });
 
 export const productAPI = {
