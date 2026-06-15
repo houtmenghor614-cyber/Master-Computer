@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FiSend, FiHeart, FiShare2, FiCheck, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
 import { productAPI } from '../services/api';
@@ -16,11 +16,7 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [sizes, setSizes] = useState(['One Size']);
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       setLoading(true);
       const response = await productAPI.getById(id);
@@ -47,7 +43,11 @@ const ProductDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const handleContactToBuy = () => {
     const sizeText = sizes.length > 0 && sizes[0] !== 'One Size' ? sizes.join(', ') : 'Standard';
@@ -125,7 +125,6 @@ Thank you!`;
 
       <div className="bg-dark-card rounded-2xl shadow-2xl overflow-hidden border border-gray-800">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-          {/* Image Gallery */}
           <div>
             <div className="mb-4">
               <img 
@@ -158,11 +157,9 @@ Thank you!`;
             )}
           </div>
 
-          {/* Product Info */}
           <div>
             <div className="mb-4">
               <h1 className="text-3xl font-bold text-white mb-2">{product.title_product}</h1>
-              
               <div className="flex items-center space-x-3 mb-3">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
@@ -173,7 +170,6 @@ Thank you!`;
                 </div>
                 <span className="text-gray-400">(50+ satisfied customers)</span>
               </div>
-              
               <div className="flex items-center space-x-3">
                 <span className="text-3xl font-bold text-primary-400">${product.discount_price}</span>
                 {product.original_price > product.discount_price && (
@@ -187,7 +183,6 @@ Thank you!`;
               </div>
             </div>
 
-            {/* FIXED STOCK DISPLAY SECTION */}
             <div className="mb-6 p-4 rounded-xl border border-gray-800 bg-dark-bg">
               <h3 className="text-sm font-semibold text-gray-300 mb-3">📦 Stock Availability</h3>
               {!isOutOfStock ? (
@@ -220,7 +215,6 @@ Thank you!`;
               )}
             </div>
 
-            {/* Color Information */}
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-300 mb-2">🎨 Color Available</h3>
               <div className="flex space-x-2">
@@ -230,24 +224,17 @@ Thank you!`;
               </div>
             </div>
 
-            {/* Size Information */}
             {sizes.length > 0 && sizes[0] !== 'One Size' && (
               <div className="mb-6">
                 <h3 className="text-sm font-semibold text-gray-300 mb-2">📏 Available Sizes</h3>
                 <div className="flex flex-wrap gap-2">
                   {sizes.map((size) => (
-                    <span
-                      key={size}
-                      className="px-4 py-2 rounded-lg border-2 border-gray-700 bg-dark-bg text-gray-300"
-                    >
-                      {size}
-                    </span>
+                    <span key={size} className="px-4 py-2 rounded-lg border-2 border-gray-700 bg-dark-bg text-gray-300">{size}</span>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Contact Button - Disabled if out of stock */}
             <div className="mb-6">
               <button
                 onClick={handleContactToBuy}
@@ -268,128 +255,44 @@ Thank you!`;
               </p>
             </div>
 
-            {/* Key Features */}
             <div className="bg-dark-bg rounded-xl p-4 mb-6 border border-gray-800">
               <h3 className="font-semibold text-white mb-3">✅ Why Buy From Us?</h3>
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center space-x-2">
-                  <FiCheck className="text-green-500" />
-                  <span className="text-sm text-gray-300">Best Price Guarantee</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FiCheck className="text-green-500" />
-                  <span className="text-sm text-gray-300">Original Products</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FiCheck className="text-green-500" />
-                  <span className="text-sm text-gray-300">Fast Shipping</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <FiCheck className="text-green-500" />
-                  <span className="text-sm text-gray-300">24/7 Customer Support</span>
-                </div>
+                <div className="flex items-center space-x-2"><FiCheck className="text-green-500" /><span className="text-sm text-gray-300">Best Price Guarantee</span></div>
+                <div className="flex items-center space-x-2"><FiCheck className="text-green-500" /><span className="text-sm text-gray-300">Original Products</span></div>
+                <div className="flex items-center space-x-2"><FiCheck className="text-green-500" /><span className="text-sm text-gray-300">Fast Shipping</span></div>
+                <div className="flex items-center space-x-2"><FiCheck className="text-green-500" /><span className="text-sm text-gray-300">24/7 Customer Support</span></div>
               </div>
             </div>
 
-            {/* Action Icons */}
             <div className="flex items-center space-x-4 pt-4 border-t border-gray-800">
-              <button className="flex items-center space-x-2 text-gray-400 hover:text-red-500 transition-colors">
-                <FiHeart size={18} />
-                <span>Save to Wishlist</span>
-              </button>
-              <button className="flex items-center space-x-2 text-gray-400 hover:text-primary-400 transition-colors">
-                <FiShare2 size={18} />
-                <span>Share</span>
-              </button>
+              <button className="flex items-center space-x-2 text-gray-400 hover:text-red-500 transition-colors"><FiHeart size={18} /><span>Save to Wishlist</span></button>
+              <button className="flex items-center space-x-2 text-gray-400 hover:text-primary-400 transition-colors"><FiShare2 size={18} /><span>Share</span></button>
             </div>
           </div>
         </div>
 
-        {/* Tabs Section */}
         <div className="border-t border-gray-800">
           <div className="flex border-b border-gray-800">
-            <button
-              onClick={() => setActiveTab('description')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'description'
-                  ? 'text-primary-400 border-b-2 border-primary-400'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Description
-            </button>
-            <button
-              onClick={() => setActiveTab('specifications')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'specifications'
-                  ? 'text-primary-400 border-b-2 border-primary-400'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Specifications
-            </button>
-            <button
-              onClick={() => setActiveTab('shipping')}
-              className={`px-6 py-3 font-semibold transition-colors ${
-                activeTab === 'shipping'
-                  ? 'text-primary-400 border-b-2 border-primary-400'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              Shipping Info
-            </button>
+            <button onClick={() => setActiveTab('description')} className={`px-6 py-3 font-semibold transition-colors ${activeTab === 'description' ? 'text-primary-400 border-b-2 border-primary-400' : 'text-gray-400 hover:text-white'}`}>Description</button>
+            <button onClick={() => setActiveTab('specifications')} className={`px-6 py-3 font-semibold transition-colors ${activeTab === 'specifications' ? 'text-primary-400 border-b-2 border-primary-400' : 'text-gray-400 hover:text-white'}`}>Specifications</button>
+            <button onClick={() => setActiveTab('shipping')} className={`px-6 py-3 font-semibold transition-colors ${activeTab === 'shipping' ? 'text-primary-400 border-b-2 border-primary-400' : 'text-gray-400 hover:text-white'}`}>Shipping Info</button>
           </div>
-          
           <div className="p-6">
-            {activeTab === 'description' && (
-              <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                {product.description}
-              </p>
-            )}
-            
+            {activeTab === 'description' && <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{product.description}</p>}
             {activeTab === 'specifications' && (
               <div className="space-y-3">
-                <div className="flex py-2 border-b border-gray-800">
-                  <span className="w-32 font-semibold text-gray-400">Brand</span>
-                  <span className="text-gray-300">MasterComputer</span>
-                </div>
-                <div className="flex py-2 border-b border-gray-800">
-                  <span className="w-32 font-semibold text-gray-400">Color</span>
-                  <span className="text-gray-300">{product.color}</span>
-                </div>
-                <div className="flex py-2 border-b border-gray-800">
-                  <span className="w-32 font-semibold text-gray-400">Available Sizes</span>
-                  <span className="text-gray-300">{sizes.join(', ')}</span>
-                </div>
-                <div className="flex py-2 border-b border-gray-800">
-                  <span className="w-32 font-semibold text-gray-400">Stock Status</span>
-                  <span className={isOutOfStock ? 'text-red-400' : 'text-green-400'}>
-                    {isOutOfStock ? 'Out of Stock' : `${product.stock_quantity} units in stock`}
-                  </span>
-                </div>
-                <div className="flex py-2 border-b border-gray-800">
-                  <span className="w-32 font-semibold text-gray-400">Warranty</span>
-                  <span className="text-gray-300">1 Year Limited Warranty</span>
-                </div>
+                <div className="flex py-2 border-b border-gray-800"><span className="w-32 font-semibold text-gray-400">Brand</span><span className="text-gray-300">MasterComputer</span></div>
+                <div className="flex py-2 border-b border-gray-800"><span className="w-32 font-semibold text-gray-400">Color</span><span className="text-gray-300">{product.color}</span></div>
+                <div className="flex py-2 border-b border-gray-800"><span className="w-32 font-semibold text-gray-400">Sizes</span><span className="text-gray-300">{sizes.join(', ')}</span></div>
+                <div className="flex py-2 border-b border-gray-800"><span className="w-32 font-semibold text-gray-400">Stock Status</span><span className={isOutOfStock ? 'text-red-400' : 'text-green-400'}>{isOutOfStock ? 'Out of Stock' : `${product.stock_quantity} units in stock`}</span></div>
+                <div className="flex py-2 border-b border-gray-800"><span className="w-32 font-semibold text-gray-400">Warranty</span><span className="text-gray-300">1 Year</span></div>
               </div>
             )}
-            
             {activeTab === 'shipping' && (
               <div className="space-y-4">
-                <div className="bg-primary-500/10 rounded-lg p-4 border border-primary-500/20">
-                  <h4 className="font-semibold text-primary-400 mb-2">Shipping Information</h4>
-                  <p className="text-gray-300">Contact us on Telegram for shipping quotes and delivery times to your location.</p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="border border-gray-800 rounded-lg p-3 bg-dark-bg">
-                    <p className="font-semibold text-gray-300">Processing Time</p>
-                    <p className="text-sm text-gray-500">1-2 business days</p>
-                  </div>
-                  <div className="border border-gray-800 rounded-lg p-3 bg-dark-bg">
-                    <p className="font-semibold text-gray-300">Delivery Time</p>
-                    <p className="text-sm text-gray-500">3-7 business days</p>
-                  </div>
-                </div>
+                <div className="bg-primary-500/10 rounded-lg p-4 border border-primary-500/20"><h4 className="font-semibold text-primary-400 mb-2">Shipping Information</h4><p className="text-gray-300">Contact us on Telegram for shipping quotes.</p></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4"><div className="border border-gray-800 rounded-lg p-3"><p className="font-semibold text-gray-300">Processing Time</p><p className="text-sm text-gray-500">1-2 business days</p></div><div className="border border-gray-800 rounded-lg p-3"><p className="font-semibold text-gray-300">Delivery Time</p><p className="text-sm text-gray-500">3-7 business days</p></div></div>
               </div>
             )}
           </div>
