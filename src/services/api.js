@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // Use Render backend URL for all environments
-const API_BASE_URL = 'https://backend-master-computer.onrender.com/api';
-const IMAGE_BASE_URL = 'https://backend-master-computer.onrender.com';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://backend-master-computer.onrender.com/api';
+const IMAGE_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'https://backend-master-computer.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -15,7 +15,6 @@ const api = axios.create({
 export const getImageUrl = (imagePath) => {
   if (!imagePath) return 'https://via.placeholder.com/500x500?text=No+Image';
   if (imagePath.startsWith('http')) return imagePath;
-  // Remove any leading slashes
   const cleanPath = imagePath.replace(/^\/+/, '');
   return `${IMAGE_BASE_URL}/${cleanPath}`;
 };
