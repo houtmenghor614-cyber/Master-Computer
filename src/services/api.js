@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-// ✅ FIXED: Include /api in the base URL
 const API_BASE_URL = 'https://backend-master-computer.onrender.com/api';
 const IMAGE_BASE_URL = 'https://backend-master-computer.onrender.com';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,  // Now correctly points to /api
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -20,12 +19,12 @@ export const getImageUrl = (imagePath) => {
 };
 
 export const productAPI = {
-  getAll: (params) => api.get('/products', { params }),  // Now calls /api/products
+  getAll: (params) => api.get('/products', { params }),
   getById: (id) => api.get(`/products/${id}`),
 };
 
 export const categoryAPI = {
-  getAll: () => api.get('/categories'),  // Now calls /api/categories
+  getAll: () => api.get('/categories'),
 };
 
 export const orderAPI = {
